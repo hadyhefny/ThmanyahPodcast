@@ -8,13 +8,18 @@ import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
     private val authorizationLocalDs: AuthorizationLocalDs,
+    private val loginService: LoginService
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token: String? = runBlocking {
-            authorizationLocalDs.getAccessToken()
+        return runBlocking {
+            val request = chain.request().newBuilder()
+            var accessToken = authorizationLocalDs.getAccessToken()
+            if (accessToken.isNullOrBlank()) {
+                accessToken = loginService.login().accessToken
+                authorizationLocalDs.saveAccessToken(accessToken)
+            }
+            request.addHeader("Authorization", "Bearer $accessToken")
+            chain.proceed(request.build())
         }
-        val request = chain.request().newBuilder()
-        request.addHeader("Authorization", "Bearer $token")
-        return chain.proceed(request.build())
     }
 }

@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class TokenAuthenticator @Inject constructor(
     private val authorizationLocalDs: AuthorizationLocalDs,
-    private val mainService: MainService
+    private val loginService: LoginService
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request {
         return runBlocking {
@@ -23,6 +23,6 @@ class TokenAuthenticator @Inject constructor(
     }
 
     private suspend fun getAccessToken(): String {
-        return mainService.login().accessToken
+        return loginService.login().accessToken
     }
 }
