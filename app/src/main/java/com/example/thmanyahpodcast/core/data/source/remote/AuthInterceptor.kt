@@ -15,8 +15,12 @@ class AuthInterceptor @Inject constructor(
             val request = chain.request().newBuilder()
             var accessToken = authorizationLocalDs.getAccessToken()
             if (accessToken.isNullOrBlank()) {
-                accessToken = loginService.login().accessToken
-                authorizationLocalDs.saveAccessToken(accessToken)
+                accessToken = try {
+                    loginService.login().accessToken
+                } catch (e: Exception) {
+                    ""
+                }
+                authorizationLocalDs.saveAccessToken(accessToken ?: "")
             }
             request.addHeader("Authorization", "Bearer $accessToken")
             chain.proceed(request.build())

@@ -23,6 +23,10 @@ class TokenAuthenticator @Inject constructor(
     }
 
     private suspend fun getAccessToken(): String {
-        return loginService.login().accessToken
+        return try {
+            loginService.login().accessToken
+        } catch (e: Exception) {
+            ""
+        }
     }
 }

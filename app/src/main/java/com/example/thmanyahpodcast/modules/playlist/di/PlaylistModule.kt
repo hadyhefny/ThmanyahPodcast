@@ -7,13 +7,13 @@ import com.example.thmanyahpodcast.modules.playlist.domain.repository.PlaylistRe
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 
-@InstallIn(ActivityComponent::class)
+@InstallIn(ViewModelComponent::class)
 @Module
 object PlaylistModule {
-    @ActivityScoped
+    @ViewModelScoped
     @Provides
     fun providePlaylistRepositoryImpl(
         playlistRemoteDs: PlaylistRemoteDs
@@ -21,7 +21,7 @@ object PlaylistModule {
         return PlaylistRepositoryImpl(playlistRemoteDs)
     }
 
-    @ActivityScoped
+    @ViewModelScoped
     @Provides
     fun providePlaylistRemoteDs(
         mainService: MainService
