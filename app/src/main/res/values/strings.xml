@@ -5,4 +5,5 @@
     <string name="something_went_wrong">حدث خطأٌ ما. يُرجَى المحاولة مجددًا.</string>
     <string name="internet_connection_error">يُرجَى التحقق من اتصال الإنترنت لديك.</string>
     <string name="retry">أعد المحاولة</string>
+    <string name="shuffle_play">تشغيل متنوع</string>
 </resources>
