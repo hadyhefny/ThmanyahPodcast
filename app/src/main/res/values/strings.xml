@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ThmanyahPodcast</string>
+    <string name="episode_duration">%1$s ساعات</string>
+    <string name="episode_count">%1$s حلقة</string>
+    <string name="something_went_wrong">حدث خطأٌ ما. يُرجَى المحاولة مجددًا.</string>
+    <string name="internet_connection_error">يُرجَى التحقق من اتصال الإنترنت لديك.</string>
+    <string name="retry">أعد المحاولة</string>
 </resources>
