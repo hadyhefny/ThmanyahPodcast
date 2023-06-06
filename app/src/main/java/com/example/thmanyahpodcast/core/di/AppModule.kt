@@ -1,8 +1,8 @@
 package com.example.thmanyahpodcast.core.di
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,8 +29,9 @@ object AppModule {
     }
 
     @Singleton
+    @ApplicationContext
     @Provides
-    fun provideGson(): Gson {
-        return Gson()
+    fun provideApplicationContext(application: Application): Application {
+        return application
     }
 }
