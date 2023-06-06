@@ -1,8 +1,11 @@
 package com.example.thmanyahpodcast.modules.playlist.presentation.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,7 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -39,17 +42,35 @@ fun PlaylistHeader(
     onFavoriteClick: () -> Unit,
     onBackClick: () -> Unit,
     onShuffleClick: () -> Unit,
-    onPlayClick: () -> Unit
+    onPlayClick: () -> Unit,
+    onDownloadClick: () -> Unit
 ) {
     ConstraintLayout(modifier = modifier) {
-        val (back, favorite, more, titleText, descText, shuffleBtn, playBtn) = createRefs()
+        val (back, favorite, more, titleText, descText, shuffleBtn, playBtn, downloadBtn, shadow, model) = createRefs()
         AsyncImage(
             model = image,
             contentDescription = null,
             modifier = Modifier
                 .fillMaxSize()
-                .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
-            contentScale = ContentScale.FillBounds,
+                .constrainAs(model) {},
+            contentScale = ContentScale.Crop,
+        )
+
+        Box(
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            colorResource(id = R.color.end_gredient),
+                            colorResource(id = R.color.start_gredient)
+                        )
+                    )
+                )
+                .height(200.dp)
+                .fillMaxWidth()
+                .constrainAs(shadow) {
+                    bottom.linkTo(model.bottom)
+                }
         )
 
         BackButton(
@@ -115,7 +136,8 @@ fun PlaylistHeader(
                     )
                 })
 
-        Button(onClick = onShuffleClick,
+        Button(
+            onClick = onShuffleClick,
             shape = RoundedCornerShape(30.dp),
             contentPadding = PaddingValues(vertical = 0.dp, horizontal = 24.dp),
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.blue)),
@@ -130,7 +152,9 @@ fun PlaylistHeader(
                         bias = 1f,
                         bottomMargin = 38.dp
                     )
-                }) {
+                },
+            elevation = ButtonDefaults.elevatedButtonElevation()
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_shuffle),
                 modifier = Modifier.padding(end = 4.dp),
@@ -154,6 +178,16 @@ fun PlaylistHeader(
                 }, onClick = onPlayClick
         )
 
+        DownloadButton(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .size(38.dp)
+                .constrainAs(downloadBtn) {
+                    linkTo(shuffleBtn.end, playBtn.start, bias = 1f, endMargin = 11.dp)
+                    linkTo(shuffleBtn.top, shuffleBtn.bottom)
+                }, onClick = onDownloadClick
+        )
+
     }
 }
 
@@ -169,7 +203,8 @@ private fun PlaylistHeaderPreview() {
             onFavoriteClick = {},
             onBackClick = {},
             onShuffleClick = {},
-            onPlayClick = {}
+            onPlayClick = {},
+            onDownloadClick = {}
         )
     }
 }

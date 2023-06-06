@@ -9,7 +9,6 @@ import com.example.thmanyahpodcast.modules.playlist.presentation.uimodel.Playlis
 import com.example.thmanyahpodcast.modules.playlist.presentation.uimodel.mapper.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import okio.IOException
@@ -28,21 +27,19 @@ class PlaylistViewModel @Inject constructor(
         }
 
     val uiModel = MutableStateFlow(_uiState.toUiModel(application))
-    val effect = MutableSharedFlow<Int?>()
 
     init {
         getPlaylist()
     }
 
-    private fun getPlaylist() {
+    fun getPlaylist() {
         viewModelScope.launch {
-            _uiState = _uiState.copy(isLoading = true)
+            _uiState = _uiState.copy(isLoading = true, error = null)
             _uiState = try {
                 val playlist = getPlaylistUseCase()
-                _uiState.copy(isLoading = false, playlistEntity = playlist)
+                _uiState.copy(isLoading = false, playlistEntity = playlist, error = null)
             } catch (e: Exception) {
-                effect.emit(e.handleError())
-                _uiState.copy(isLoading = false)
+                _uiState.copy(isLoading = false, error = e.handleError())
             }
         }
     }

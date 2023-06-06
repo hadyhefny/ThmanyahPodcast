@@ -9,8 +9,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,9 +16,8 @@ import androidx.compose.ui.unit.dp
 import com.example.thmanyahpodcast.R
 
 @Composable
-fun PlayButton(
+fun DownloadButton(
     modifier: Modifier = Modifier,
-    icon: Int = R.drawable.ic_play,
     onClick: () -> Unit,
 ) {
     Button(
@@ -32,14 +29,14 @@ fun PlayButton(
         contentPadding = PaddingValues(0.dp),
         elevation = ButtonDefaults.elevatedButtonElevation()
     ) {
-        Image(painter = painterResource(id = icon), contentDescription = null)
+        Image(painter = painterResource(id = R.drawable.ic_download), contentDescription = null)
     }
 }
 
 @Preview
 @Composable
-private fun PlayButtonPreview() {
+private fun DownloadButtonPreview() {
     MaterialTheme {
-        PlayButton(onClick = {})
+        DownloadButton(onClick = {})
     }
 }

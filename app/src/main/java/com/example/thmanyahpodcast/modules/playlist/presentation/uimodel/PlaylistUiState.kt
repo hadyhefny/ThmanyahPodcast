@@ -4,5 +4,6 @@ import com.example.thmanyahpodcast.modules.playlist.domain.entity.PlaylistEntity
 
 data class PlaylistUiState(
     val isLoading: Boolean = false,
-    val playlistEntity: PlaylistEntity? = null
+    val playlistEntity: PlaylistEntity? = null,
+    val error: Int? = null
 )

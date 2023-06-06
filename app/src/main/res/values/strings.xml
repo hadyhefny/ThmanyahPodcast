@@ -2,8 +2,14 @@
     <string name="app_name">ThmanyahPodcast</string>
     <string name="episode_duration">%1$s ساعات</string>
     <string name="episode_count">%1$s حلقة</string>
+    <string name="episode_count_duration">%1$s حلقة . %2$s ساعات </string>
     <string name="something_went_wrong">حدث خطأٌ ما. يُرجَى المحاولة مجددًا.</string>
     <string name="internet_connection_error">يُرجَى التحقق من اتصال الإنترنت لديك.</string>
     <string name="retry">أعد المحاولة</string>
     <string name="shuffle_play">تشغيل متنوع</string>
+    <string name="episodes_header_title">الحلقات</string>
+    <string name="episode_date_time">"%1$s . %2$s دقيقة"</string>
+    <string name="main">الرئيسية</string>
+    <string name="search">بحث</string>
+    <string name="library">المكتبة</string>
 </resources>

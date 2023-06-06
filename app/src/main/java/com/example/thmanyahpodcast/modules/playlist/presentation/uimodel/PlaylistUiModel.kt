@@ -5,9 +5,9 @@ data class PlaylistUiModel(
     val name: String,
     val description: String,
     val image: String,
-    val episodeCount: String,
-    val episodeTotalDuration: String,
-    val episodes: List<EpisodeUiModel>
+    val episodeCountDuration: String,
+    val episodes: List<EpisodeUiModel>,
+    val error: String?
 )
 
 data class EpisodeUiModel(
@@ -15,7 +15,6 @@ data class EpisodeUiModel(
     val name: String,
     val image: String,
     val audioLink: String,
-    val duration: String,
     val podcastName: String,
-    val releaseDate: String
+    val episodeDateAndTime: String
 )
