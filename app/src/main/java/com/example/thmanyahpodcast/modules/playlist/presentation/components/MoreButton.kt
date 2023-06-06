@@ -25,7 +25,6 @@ fun MoreButton(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(Color.Transparent),
         modifier = modifier
-            .blur(radius = 20.dp)
             .size(39.dp),
         shape = CircleShape,
         contentPadding = PaddingValues(0.dp)
