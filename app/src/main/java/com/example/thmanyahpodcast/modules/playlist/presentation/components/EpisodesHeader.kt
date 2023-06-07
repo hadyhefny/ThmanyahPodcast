@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,7 +33,7 @@ fun EpisodesHeader(
             .fillMaxWidth()
             .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
             .background(Color.White)
-            .padding(20.dp)
+            .padding(horizontal = 20.dp)
     ) {
         Column {
             Row(
@@ -62,12 +60,6 @@ fun EpisodesHeader(
                     color = colorResource(id = R.color.light_grey),
                 )
             }
-            Divider(
-                color = colorResource(id = R.color.platinum),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-            )
         }
     }
 }
