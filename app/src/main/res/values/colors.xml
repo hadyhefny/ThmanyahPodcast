@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="blue">#2972F3</color>
+    <color name="dark_gunmetal">#1C222B</color>
+    <color name="grey">#76787C</color>
+    <color name="light_grey">#A3A5A7</color>
+    <color name="platinum">#E4E4E5</color>
+    <color name="start_gredient">#000000</color>
+    <color name="end_gredient">#00000000</color>
 </resources>
