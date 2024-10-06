@@ -2,7 +2,7 @@
 buildscript {
     ext {
         hilt_version = "2.45"
-        glide_version = "4.15.1"
+        glide_version = "4.16.0"
         retrofit_version = "2.9.0"
         okhttp_version = "4.11.0"
         coil_version = "2.2.2"
