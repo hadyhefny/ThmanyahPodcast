@@ -1,0 +1,45 @@
+name: Android CI
+
+# Trigger the workflow on pull requests to main and develop branches
+on:
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up JDK (Java 11 or 17 depending on your Android project setup)
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'  # You can also use 'adopt' or 'temurin'
+          java-version: '17'    # Or '17' if your project uses Java 17
+
+      # Step 3: Cache Gradle dependencies to speed up builds
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      # Step 4: Set up the Android SDK
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33              # Adjust according to your project's target SDK version
+          build-tools: 35        # Adjust according to your project's build tools version
+
+      # Step 5: Build the Android project
+      - name: Build with Gradle
+        run: ./gradlew build
