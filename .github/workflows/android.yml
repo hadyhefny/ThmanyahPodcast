@@ -49,8 +49,11 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          api-level: '33'              # Adjust according to your project's target SDK version
-          build-tools: '35'        # Adjust according to your project's build tools version
+          cmdline-tools-version: 'latest'  # Optional, can be specific version of the command-line tools
+          packages: |
+              platform-tools
+              platforms;android-33         # Install Android API level 33
+              build-tools;35.0.0           # Install Build Tools version 35.0.0
 
       # Step 5: Build the Android project
       - name: Build with Gradle
