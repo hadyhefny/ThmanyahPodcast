@@ -25,7 +25,7 @@ jobs:
     steps:
       # Step 1: Check out the code from the repository
       - name: Checkout code
-        uses: actions/checkout@4
+        uses: actions/checkout@v4
 
       # Step 2: Set up JDK (Java 11 or 17 depending on your Android project setup)
       - name: Set up JDK
@@ -47,7 +47,7 @@ jobs:
 
       # Step 4: Set up the Android SDK
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v3
         with:
           api-level: '33'              # Adjust according to your project's target SDK version
           build-tools: '35'        # Adjust according to your project's build tools version
