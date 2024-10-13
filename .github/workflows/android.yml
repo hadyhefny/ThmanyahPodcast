@@ -2,6 +2,10 @@ name: Android CI
 
 # Trigger the workflow on pull requests to main and develop branches
 on:
+  push:
+    branches:
+      - development
+      - main
   pull_request:
     branches:
       - development
@@ -18,7 +22,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
       # Step 1: Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v4
