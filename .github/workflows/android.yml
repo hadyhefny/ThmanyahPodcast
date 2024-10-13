@@ -36,6 +36,11 @@ jobs:
           fi
         shell: bash
 
+      - name: Print Release Notes
+        run: |
+          echo "Release Notes:"
+          echo "$RELEASE_NOTES"
+
 #      # Step 2: Set up JDK (Java 11 or 17 depending on your Android project setup)
 #      - name: Set up JDK
 #        uses: actions/setup-java@v4
