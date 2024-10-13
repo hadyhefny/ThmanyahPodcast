@@ -35,28 +35,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up JDK (Java 11 or 17 depending on your Android project setup)
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'  # You can also use 'adopt' or 'temurin'
-          java-version: '17'    # Or '17' if your project uses Java 17
+      - name: Determine Release Notes
+        id: release_notes
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "RELEASE_NOTES=${{ inputs.release_notes }}" >> $GITHUB_ENV
+          else
+            echo "RELEASE_NOTES=${{ github.event.pull_request.title \n github.event.pull_request.body }}" >> $GITHUB_ENV
+          fi
+        shell: bash
 
-      # Step 3: Cache Gradle dependencies to speed up builds
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
-
-      # Step 4: Set up the Android SDK
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      # Step 5: Build the Android project
-      - name: Build with Gradle
-        run: ./gradlew build
+#      # Step 2: Set up JDK (Java 11 or 17 depending on your Android project setup)
+#      - name: Set up JDK
+#        uses: actions/setup-java@v4
+#        with:
+#          distribution: 'zulu'  # You can also use 'adopt' or 'temurin'
+#          java-version: '17'    # Or '17' if your project uses Java 17
+#
+#      # Step 3: Cache Gradle dependencies to speed up builds
+#      - name: Cache Gradle packages
+#        uses: actions/cache@v4
+#        with:
+#          path: |
+#            ~/.gradle/caches
+#            ~/.gradle/wrapper
+#          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#          restore-keys: |
+#            gradle-${{ runner.os }}-
+#
+#      # Step 4: Set up the Android SDK
+#      - name: Set up Android SDK
+#        uses: android-actions/setup-android@v3
+#
+#      # Step 5: Build the Android project
+#      - name: Build with Gradle
+#        run: ./gradlew build
