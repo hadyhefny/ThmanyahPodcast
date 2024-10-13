@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      - name: Fail Workflow if label is not 'build'
-       if: ${{ github.event.label.name != 'build' }}
+       if: ${{ github.event.label.name != 'build' && github.event_name != 'workflow_dispatch' }}
        run: |
          echo "Label is not 'build'. Exiting..."
          exit 1
