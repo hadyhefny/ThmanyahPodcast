@@ -19,9 +19,17 @@ on:
         description: "Release Notes"
 
 jobs:
+  check-label:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Fail Workflow if label is not 'build'
+       if: ${{ github.event.label.name != 'build' }}
+       run: |
+         echo "Label is not 'build'. Exiting..."
+         exit 1
   build:
     runs-on: ubuntu-latest
-
+    needs: check-label
     steps:
       # Step 1: Check out the code from the repository
       - name: Checkout code
