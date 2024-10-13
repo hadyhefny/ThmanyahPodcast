@@ -27,7 +27,6 @@ jobs:
           else
             echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
             echo "${{ github.event.pull_request.title }}" >> $GITHUB_ENV
-            echo "" >> $GITHUB_ENV  # Add a newline
             echo "${{ github.event.pull_request.body }}" >> $GITHUB_ENV
             echo "EOF" >> $GITHUB_ENV
           fi
