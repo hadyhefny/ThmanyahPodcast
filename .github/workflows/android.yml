@@ -3,7 +3,8 @@ name: Android CI
 # Trigger the workflow on pull requests to main and develop branches
 on:
   push:
-    - development
+    branches:
+      - development
   pull_request:
     branches:
       - development
