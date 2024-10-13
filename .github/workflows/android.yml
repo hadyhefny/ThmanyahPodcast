@@ -2,6 +2,10 @@ name: Android CI
 
 # Trigger the workflow on pull requests to main and develop branches
 on:
+  push:
+    branches:
+      - development
+      - main
   pull_request:
     branches:
       - development
@@ -28,7 +32,7 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "RELEASE_NOTES=${{ inputs.release_notes }}" >> $GITHUB_ENV
           else
-            echo "RELEASE_NOTES=${{ github.event.pull_request.title \n github.event.pull_request.body }}" >> $GITHUB_ENV
+            printf "RELEASE_NOTES=%s\n%s" "${{ github.event.pull_request.title }}" "${{ github.event.pull_request.body }}" >> $GITHUB_ENV
           fi
         shell: bash
 
