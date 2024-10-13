@@ -25,7 +25,8 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "RELEASE_NOTES=${{ inputs.release_notes }}" >> $GITHUB_ENV
           else
-            echo "RELEASE_NOTES=${{ github.event.pull_request.title }} ${{ github.event.pull_request.body }}" >> $GITHUB_ENV
+            text = "${{ github.event.pull_request.title }}\n${{ github.event.pull_request.body }}"
+            echo "RELEASE_NOTES=$text" >> $GITHUB_ENV
           fi
         shell: bash
 
