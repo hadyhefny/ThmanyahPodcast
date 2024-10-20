@@ -25,10 +25,19 @@ jobs:
           VERSION_NAME=$(grep -oP '(?<=versionName ")[^"]*' app/build.gradle)
           echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
 
+      - name: Get last commit hash code
+        id: get_commit_hash_code
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "COMMIT_HASH_CODE=${{ github.sha }} >> $GITHUB_ENV
+          else
+            echo "COMMIT_HASH_CODE=${{ github.event.pull_request.head.sha }} >> $GITHUB_ENV
+          fi
+
       - name: Modify versionName
         id: modify_version_name
         run: |
-          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}"
+          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${COMMIT_HASH_CODE}"
           echo "New version name: ${NEW_VERSION_NAME}"
       
           # Update the versionName in build.gradle
