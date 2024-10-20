@@ -46,7 +46,9 @@ jobs:
           TIMESTAMP=$(date +%s)  # Get the current timestamp in seconds
           CURRENT_MINUTES=$((TIMESTAMP / 60))  # Convert to minutes
           NEW_VERSION_CODE=$((CURRENT_MINUTES - 28650))  # Subtract 228650 from the current minutes
-          echo "New versionCode: ${NEW_VERSION_CODE}"
+          echo "TIMESTAMP: ${TIMESTAMP}"
+          echo "CURRENT_MINUTES: ${CURRENT_MINUTES}"
+          echo "New version code: ${NEW_VERSION_CODE}"
 
           # Modify versionName
           NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ env.COMMIT_HASH_CODE }}"
