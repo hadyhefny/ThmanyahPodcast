@@ -19,20 +19,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Determine Release Notes
-        id: release_notes
+      - name: Extract existing versionName
+        id: get_version_name
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "RELEASE_NOTES=${{ inputs.release_notes }}" >> $GITHUB_ENV
-          else
-            echo "RELEASE_NOTES=${{ github.event.pull_request.title }}$'\n'${{ github.event.pull_request.body }}" >> $GITHUB_ENV
-          fi
-        shell: bash
+          VERSION_NAME=$(grep -oP '(?<=versionName ")[^"]*' app/build.gradle)
+          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
 
-      - name: Print Release Notes
+      - name: Modify versionName
+        id: modify_version_name
         run: |
-          echo "Release Notes:"
-          echo ${{ env.RELEASE_NOTES }}
+          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ github.sha }}"
+          echo "New version name: ${NEW_VERSION_NAME}"
+      
+          # Update the versionName in build.gradle
+          sed -i "s/versionName \".*\"/versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
+      
+          # Verify the new versionName
+          grep "versionName" app/build.gradle
+
+#      - name: Determine Release Notes
+#        id: release_notes
+#        run: |
+#          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+#            echo "RELEASE_NOTES=${{ inputs.release_notes }}" >> $GITHUB_ENV
+#          else
+#            echo "RELEASE_NOTES=${{ github.event.pull_request.title }}$'\n'${{ github.event.pull_request.body }}" >> $GITHUB_ENV
+#          fi
+#        shell: bash
+#
+#      - name: Print Release Notes
+#        run: |
+#          echo "Release Notes:"
+#          echo ${{ env.RELEASE_NOTES }}
 
 #      # Step 2: Set up JDK (Java 11 or 17 depending on your Android project setup)
 #      - name: Set up JDK
