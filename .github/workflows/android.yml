@@ -20,9 +20,9 @@ jobs:
         uses: actions/checkout@v4
       - name: timestamp
         run: |
-          TIMESTAMP=$(date +%s)  # Get the current timestamp in milliseconds
-          CURRENT_MINUTES=$((TIMESTAMP / 60000))  # Convert to minutes
-          VERSION_CODE=$((CURRENT_MINUTES - 28650)) # Subtract 28650 from the current minutes
+          TIMESTAMP=$(date +%s)  # Get the current timestamp in seconds
+          CURRENT_MINUTES=$((TIMESTAMP / 60))  # Convert to minutes
+          VERSION_CODE=$((CURRENT_MINUTES - 28823700))
           echo "TIMESTAMP: ${TIMESTAMP}"
           echo "CURRENT_MINUTES: ${CURRENT_MINUTES}"
           echo "VERSION_CODE: ${VERSION_CODE}"
