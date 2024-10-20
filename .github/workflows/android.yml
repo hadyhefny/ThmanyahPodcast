@@ -35,7 +35,7 @@ jobs:
           sed -i "s/versionName \".*\"/versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
       
           # Verify the new versionName
-          grep "versionName" app/build.gradle
+#          grep "versionName" app/build.gradle
 
 #      - name: Determine Release Notes
 #        id: release_notes
