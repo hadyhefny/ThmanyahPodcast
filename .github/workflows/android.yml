@@ -37,7 +37,7 @@ jobs:
       - name: Modify versionName
         id: modify_version_name
         run: |
-          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${COMMIT_HASH_CODE}"
+          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ env.COMMIT_HASH_CODE }}"
           echo "New version name: ${NEW_VERSION_NAME}"
       
           # Update the versionName in build.gradle
