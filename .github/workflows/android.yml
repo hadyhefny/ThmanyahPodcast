@@ -18,51 +18,59 @@ jobs:
       # Step 1: Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Get last commit hash code
-        id: get_commit_hash_code
+      - name: timestamp
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "COMMIT_HASH_CODE=${{ github.sha }}" >> $GITHUB_ENV
-          else
-            echo "COMMIT_HASH_CODE=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
-          fi
-
-      - name: Extract versionCode and versionName
-        id: extract_version_code_name
-        run: |
-          # Extract versionCode
-          VERSION_CODE=$(grep -oP 'versionCode \K\d+' app/build.gradle)
-          echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_ENV
-          
-          # Extract VersionName
-          VERSION_NAME=$(grep -oP '(?<=versionName ")[^"]*' app/build.gradle)
-          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
-
-      - name: Modify versionCode and versionName
-        id: modify_version_code_name
-        run: |
-          # Modify versionCode
           TIMESTAMP=$(date +%s)  # Get the current timestamp in milliseconds
           CURRENT_MINUTES=$((TIMESTAMP / 60000))  # Convert to minutes
-          NEW_VERSION_CODE=$((CURRENT_MINUTES - 28650))  # Subtract 228650 from the current minutes
-          echo "New version code: ${NEW_VERSION_CODE}"
+          VERSION_CODE=$((CURRENT_MINUTES - 28650)) # Subtract 28650 from the current minutes
+          echo "TIMESTAMP: ${TIMESTAMP}"
+          echo "CURRENT_MINUTES: ${CURRENT_MINUTES}"
+          echo "VERSION_CODE: ${VERSION_CODE}"
 
-          # Modify versionName
-          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ env.COMMIT_HASH_CODE }}"
-          echo "New version name: ${NEW_VERSION_NAME}"
-          
-          # Update versionCode in build.gradle
-          sed -i "s/versionCode [0-9]\+/versionCode ${NEW_VERSION_CODE}/" app/build.gradle
-          
-          # Update the versionName in build.gradle
-          sed -i "s/versionName \".*\"/versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
+#      - name: Get last commit hash code
+#        id: get_commit_hash_code
+#        run: |
+#          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+#            echo "COMMIT_HASH_CODE=${{ github.sha }}" >> $GITHUB_ENV
+#          else
+#            echo "COMMIT_HASH_CODE=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
+#          fi
 
-      - name: Verify changes
-        run: |
-          # Print updated versionCode and versionName from build.gradle
-          grep 'versionCode' app/build.gradle
-          grep 'versionName' app/build.gradle
+#      - name: Extract versionCode and versionName
+#        id: extract_version_code_name
+#        run: |
+#          # Extract versionCode
+#          VERSION_CODE=$(grep -oP 'versionCode \K\d+' app/build.gradle)
+#          echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_ENV
+#
+#          # Extract VersionName
+#          VERSION_NAME=$(grep -oP '(?<=versionName ")[^"]*' app/build.gradle)
+#          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
+#
+#      - name: Modify versionCode and versionName
+#        id: modify_version_code_name
+#        run: |
+#          # Modify versionCode
+#          TIMESTAMP=$(date +%s)  # Get the current timestamp in milliseconds
+#          CURRENT_MINUTES=$((TIMESTAMP / 60000))  # Convert to minutes
+#          NEW_VERSION_CODE=$((CURRENT_MINUTES - 28650))  # Subtract 28650 from the current minutes
+#          echo "New version code: ${NEW_VERSION_CODE}"
+#
+#          # Modify versionName
+#          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ env.COMMIT_HASH_CODE }}"
+#          echo "New version name: ${NEW_VERSION_NAME}"
+#
+#          # Update versionCode in build.gradle
+#          sed -i "s/versionCode [0-9]\+/versionCode ${NEW_VERSION_CODE}/" app/build.gradle
+#
+#          # Update the versionName in build.gradle
+#          sed -i "s/versionName \".*\"/versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
+#
+#      - name: Verify changes
+#        run: |
+#          # Print updated versionCode and versionName from build.gradle
+#          grep 'versionCode' app/build.gradle
+#          grep 'versionName' app/build.gradle
 
 #      - name: Determine Release Notes
 #        id: release_notes
