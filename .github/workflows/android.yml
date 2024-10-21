@@ -44,24 +44,35 @@ jobs:
           # Print updated versionCode from build.gradle
           grep 'versionCode' app/build.gradle
 
-      - name: Determine Branch Name
-        id: get_branch_name
+      - name: commit changes
+        uses: actions/checkout@v4
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "BRANCH_NAME=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
-          else
-            echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
-          fi
+            date > generated.txt
+            # Note: the following account information will not work on GHES
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "generated"
+            git push
 
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add app/build.gradle
-          git commit -m "Automatically updated versioning: ${{ env.NEW_VERSION_CODE }}"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git pull origin HEAD:${{ env.BRANCH_NAME }}
-          git push origin HEAD:${{ env.BRANCH_NAME }}
+#      - name: Determine Branch Name
+#        id: get_branch_name
+#        run: |
+#          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+#            echo "BRANCH_NAME=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+#          else
+#            echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+#          fi
+#
+#      - name: Commit and Push Changes
+#        run: |
+#          git config --global user.name "github-actions[bot]"
+#          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#          git add app/build.gradle
+#          git commit -m "Automatically updated versioning: ${{ env.NEW_VERSION_CODE }}"
+#          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+#          git pull origin HEAD:${{ env.BRANCH_NAME }}
+#          git push origin HEAD:${{ env.BRANCH_NAME }}
           
 #      - name: Configure Git user
 #        run: |
