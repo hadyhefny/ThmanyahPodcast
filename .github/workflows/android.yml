@@ -30,7 +30,7 @@ jobs:
         id: modify_version_code
         run: |
           # Modify versionCode
-          NEW_VERSION_CODE=$((env.VERSION_CODE + 1))
+          NEW_VERSION_CODE=$((VERSION_CODE + 1))
           echo "NEW_VERSION_CODE: ${NEW_VERSION_CODE}" >> $GITHUB_ENV
           echo "New version code: ${NEW_VERSION_CODE}"
 
