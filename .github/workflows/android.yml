@@ -2,14 +2,7 @@ name: Android CI
 
 # Trigger the workflow on pull requests to main and develop branches
 on:
-  push:
-    branches:
-      - development
-      - main
   pull_request:
-    branches:
-      - development
-      - main
   workflow_dispatch:
     inputs:
       release_notes:
@@ -21,20 +14,109 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: # Job-level permissions configuration starts here
+      contents: write           # 'write' access to repository contents
+      pull-requests: write      # 'write' access to pull requests
     steps:
       # Step 1: Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
-      - name: Determine Release Notes
-        id: release_notes
+      - name: Extract versionCode
+        id: extract_version_code
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "RELEASE_NOTES=${{ inputs.release_notes }}" >> $GITHUB_ENV
+          # Extract versionCode
+          VERSION_CODE=$(grep -oP 'versionCode \K\d+' app/build.gradle)
+          echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_ENV
+
+      - name: Modify versionCode
+        id: modify_version_code
+        run: |
+          # Modify versionCode
+          NEW_VERSION_CODE=$((VERSION_CODE + 1))
+          echo "NEW_VERSION_CODE=${NEW_VERSION_CODE}" >> $GITHUB_ENV
+          echo "New version code: ${NEW_VERSION_CODE}"
+
+          # Update versionCode in build.gradle
+          sed -i "s/versionCode [0-9]\+/versionCode ${NEW_VERSION_CODE}/" app/build.gradle
+
+      - name: Verify changes
+        run: |
+          # Print updated versionCode from build.gradle
+          grep 'versionCode' app/build.gradle
+
+      - name: Determine Branch Name
+        id: get_branch_name
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
           else
-            printf "RELEASE_NOTES=%s\n%s" "${{ github.event.pull_request.title }}" "${{ github.event.pull_request.body }}" >> $GITHUB_ENV
+            echo "BRANCH_NAME=${{ github.ref }}" >> $GITHUB_ENV
           fi
-        shell: bash
+
+      - name: Commit files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "Add changes"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.BRANCH_NAME }}
+
+#      - name: commit changes
+#        run: |
+#            # Note: the following account information will not work on GHES
+#            git config user.name "github-actions[bot]"
+#            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+#            git add .
+#            git commit -m "new version code: ${{ env.NEW_VERSION_CODE }}"
+#            git push origin HEAD:${{ env.BRANCH_NAME }}
+
+#
+#      - name: Commit and Push Changes
+#        run: |
+#          git config --global user.name "github-actions[bot]"
+#          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#          git add app/build.gradle
+#          git commit -m "Automatically updated versioning: ${{ env.NEW_VERSION_CODE }}"
+#          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+#          git pull origin HEAD:${{ env.BRANCH_NAME }}
+#          git push origin HEAD:${{ env.BRANCH_NAME }}
+          
+#      - name: Configure Git user
+#        run: |
+#          git config --global user.name "GitHub Action"
+#          git config --global user.email "actions@github.com"
+#
+#      - name: Commit changes
+#        run: |
+#          git add app/build.gradle
+#          git commit -m "Update versionCode to ${VERSION_CODE} from GitHub Actions"
+#
+#      - name: Push changes
+#        run: git push
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub automatically provides this token to authenticate push
+
+#      - name: Determine Release Notes
+#        id: release_notes
+#        run: |
+#          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+#            echo "RELEASE_NOTES=${{ inputs.release_notes }}" >> $GITHUB_ENV
+#          else
+#            echo "RELEASE_NOTES=${{ github.event.pull_request.title }}$'\n'${{ github.event.pull_request.body }}" >> $GITHUB_ENV
+#          fi
+#        shell: bash
+#
+#      - name: Print Release Notes
+#        run: |
+#          echo "Release Notes:"
+#          echo ${{ env.RELEASE_NOTES }}
 
 #      # Step 2: Set up JDK (Java 11 or 17 depending on your Android project setup)
 #      - name: Set up JDK
