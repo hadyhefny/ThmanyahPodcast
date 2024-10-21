@@ -57,9 +57,8 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add app/build.gradle
           git commit -m "Automatically updated versioning: ${{ env.NEW_VERSION_CODE }}"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin HEAD:${{ env.BRANCH_NAME }}
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub automatically provides this token to authenticate push
           
 #      - name: Configure Git user
 #        run: |
