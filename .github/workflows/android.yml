@@ -31,7 +31,7 @@ jobs:
         run: |
           # Modify versionCode
           NEW_VERSION_CODE=$((VERSION_CODE + 1))
-          echo "NEW_VERSION_CODE: ${NEW_VERSION_CODE}" >> $GITHUB_ENV
+          echo "NEW_VERSION_CODE=${NEW_VERSION_CODE}" >> $GITHUB_ENV
           echo "New version code: ${NEW_VERSION_CODE}"
 
           # Update versionCode in build.gradle
