@@ -2,14 +2,7 @@ name: Android CI
 
 # Trigger the workflow on pull requests to main and develop branches
 on:
-  push:
-    branches:
-      - development
-      - main
   pull_request:
-    branches:
-      - development
-      - main
   workflow_dispatch:
     inputs:
       release_notes:
@@ -21,20 +14,86 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: # Job-level permissions configuration starts here
+      contents: write           # 'write' access to repository contents
+      pull-requests: write      # 'write' access to pull requests
     steps:
       # Step 1: Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
-      - name: Determine Release Notes
-        id: release_notes
+#      - name: Get last commit hash code
+#        id: get_commit_hash_code
+#        run: |
+#          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+#            SHORT_HASH=$(echo "${{ github.sha }}" | cut -c1-5)
+#          else
+#            SHORT_HASH=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-5)
+#          fi
+#          echo "COMMIT_HASH_CODE=$SHORT_HASH" >> $GITHUB_ENV
+#
+#      - name: Extract VersionName
+#        id: extract_version_name
+#        run: |
+#          # Extract VersionName
+#          VERSION_NAME=$(grep -oP '(?<=versionName ")[^"]*' app/build.gradle)
+#          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
+#
+#      - name: Modify versionName
+#        id: modify_version_name
+#        run: |
+#          # Modify versionName
+#          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ env.COMMIT_HASH_CODE }}"
+#          echo "New version name: ${NEW_VERSION_NAME}"
+#
+#          # Update the versionName in build.gradle
+#          sed -i "s/versionName \".*\"/versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
+#
+#      - name: Verify changes
+#        run: |
+#          # Print updated versionName from build.gradle
+#          grep 'versionName' app/build.gradle
+
+      - name: Determine Branch Name
+        id: get_branch_name
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "RELEASE_NOTES=${{ inputs.release_notes }}" >> $GITHUB_ENV
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
           else
-            printf "RELEASE_NOTES=%s\n%s" "${{ github.event.pull_request.title }}" "${{ github.event.pull_request.body }}" >> $GITHUB_ENV
+            BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+            echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
           fi
-        shell: bash
+          echo "${BRANCH_NAME}"
+#
+#      - name: Commit files
+#        run: |
+#          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+#          git config --local user.name "github-actions[bot]"
+#          git commit -a -m "Add changes"
+#
+#      - name: Push changes
+#        uses: ad-m/github-push-action@master
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          branch: ${{ env.BRANCH_NAME }}
+
+#      - name: Determine Release Notes
+#        id: release_notes
+#        run: |
+#          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+#            echo "RELEASE_NOTES=${{ inputs.release_notes }}" >> $GITHUB_ENV
+#          else
+#            echo "RELEASE_NOTES=${{ github.event.pull_request.title }}$'\n'${{ github.event.pull_request.body }}" >> $GITHUB_ENV
+#          fi
+#        shell: bash
+#
+#      - name: Print Release Notes
+#        run: |
+#          echo "Release Notes:"
+#          echo ${{ env.RELEASE_NOTES }}
 
 #      # Step 2: Set up JDK (Java 11 or 17 depending on your Android project setup)
 #      - name: Set up JDK
