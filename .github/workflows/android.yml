@@ -25,46 +25,47 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
-      - name: Get last commit hash code
-        id: get_commit_hash_code
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            SHORT_HASH=$(echo "${{ github.sha }}" | cut -c1-5)
-          else
-            SHORT_HASH=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-5)
-          fi
-          echo "COMMIT_HASH_CODE=$SHORT_HASH" >> $GITHUB_ENV
-
-      - name: Extract VersionName
-        id: extract_version_name
-        run: |
-          # Extract VersionName
-          VERSION_NAME=$(grep -oP '(?<=versionName ")[^"]*' app/build.gradle)
-          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
-
-      - name: Modify versionName
-        id: modify_version_name
-        run: |
-          # Modify versionName
-          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ env.COMMIT_HASH_CODE }}"
-          echo "New version name: ${NEW_VERSION_NAME}"
-
-          # Update the versionName in build.gradle
-          sed -i "s/versionName \".*\"/versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
-
-      - name: Verify changes
-        run: |
-          # Print updated versionName from build.gradle
-          grep 'versionName' app/build.gradle
-
-#      - name: Determine Branch Name
-#        id: get_branch_name
+#      - name: Get last commit hash code
+#        id: get_commit_hash_code
 #        run: |
-#          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-#            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+#          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+#            SHORT_HASH=$(echo "${{ github.sha }}" | cut -c1-5)
 #          else
-#            echo "BRANCH_NAME=${{ github.ref }}" >> $GITHUB_ENV
+#            SHORT_HASH=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-5)
 #          fi
+#          echo "COMMIT_HASH_CODE=$SHORT_HASH" >> $GITHUB_ENV
+#
+#      - name: Extract VersionName
+#        id: extract_version_name
+#        run: |
+#          # Extract VersionName
+#          VERSION_NAME=$(grep -oP '(?<=versionName ")[^"]*' app/build.gradle)
+#          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
+#
+#      - name: Modify versionName
+#        id: modify_version_name
+#        run: |
+#          # Modify versionName
+#          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ env.COMMIT_HASH_CODE }}"
+#          echo "New version name: ${NEW_VERSION_NAME}"
+#
+#          # Update the versionName in build.gradle
+#          sed -i "s/versionName \".*\"/versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
+#
+#      - name: Verify changes
+#        run: |
+#          # Print updated versionName from build.gradle
+#          grep 'versionName' app/build.gradle
+
+      - name: Determine Branch Name
+        id: get_branch_name
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+          else
+            echo "BRANCH_NAME=${{ github.ref }}" >> $GITHUB_ENV
+          fi
+          echo "${BRANCH_NAME}
 #
 #      - name: Commit files
 #        run: |
