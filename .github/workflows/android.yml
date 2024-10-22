@@ -33,6 +33,8 @@ jobs:
           else
             echo "COMMIT_HASH_CODE=${{ github.event.pull_request.head.sha }}:0:5" >> $GITHUB_ENV
           fi
+          SHORT_COMMIT_HASH_CODE=${COMMIT_HASH_CODE:0:5}
+          echo "COMMIT_HASH_CODE=${SHORT_COMMIT_HASH_CODE}" >> $GITHUB_ENV
 
       - name: Extract VersionName
         id: extract_version_name
