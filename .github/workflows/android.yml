@@ -29,12 +29,11 @@ jobs:
         id: get_commit_hash_code
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "COMMIT_HASH_CODE=${{ github.sha }}" >> $GITHUB_ENV
+            SHORT_HASH=$(echo "${{ github.sha }}" | cut -c1-5)
           else
-            echo "COMMIT_HASH_CODE=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
+            SHORT_HASH=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-5)
           fi
-          SHORT_COMMIT_HASH_CODE=${{ COMMIT_HASH_CODE }}
-          echo "COMMIT_HASH_CODE=${SHORT_COMMIT_HASH_CODE}" >> $GITHUB_ENV
+          echo "COMMIT_HASH_CODE=$SHORT_HASH" >> $GITHUB_ENV
 
       - name: Extract VersionName
         id: extract_version_name
