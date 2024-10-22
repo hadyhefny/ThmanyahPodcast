@@ -25,83 +25,57 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
-      - name: Extract versionCode
-        id: extract_version_code
+      - name: Get last commit hash code
+        id: get_commit_hash_code
         run: |
-          # Extract versionCode
-          VERSION_CODE=$(grep -oP 'versionCode \K\d+' app/build.gradle)
-          echo "VERSION_CODE=${VERSION_CODE}" >> $GITHUB_ENV
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "COMMIT_HASH_CODE=${{ github.sha }}" >> $GITHUB_ENV
+          else
+            echo "COMMIT_HASH_CODE=${{ github.event.pull_request.head.sha }}" >> $GITHUB_ENV
+          fi
 
-      - name: Modify versionCode
-        id: modify_version_code
+      - name: Extract VersionName
+        id: extract_version_name
         run: |
-          # Modify versionCode
-          NEW_VERSION_CODE=$((VERSION_CODE + 1))
-          echo "NEW_VERSION_CODE=${NEW_VERSION_CODE}" >> $GITHUB_ENV
-          echo "New version code: ${NEW_VERSION_CODE}"
+          # Extract VersionName
+          VERSION_NAME=$(grep -oP '(?<=versionName ")[^"]*' app/build.gradle)
+          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
 
-          # Update versionCode in build.gradle
-          sed -i "s/versionCode [0-9]\+/versionCode ${NEW_VERSION_CODE}/" app/build.gradle
+      - name: Modify versionName
+        id: modify_version_name
+        run: |
+          # Modify versionName
+          NEW_VERSION_NAME="${VERSION_NAME}-${{ github.event.pull_request.number }}-${{ env.COMMIT_HASH_CODE }}[1:5]"
+          echo "New version name: ${NEW_VERSION_NAME}"
+
+          # Update the versionName in build.gradle
+          sed -i "s/versionName \".*\"/versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
 
       - name: Verify changes
         run: |
-          # Print updated versionCode from build.gradle
-          grep 'versionCode' app/build.gradle
+          # Print updated versionName from build.gradle
+          grep 'versionName' app/build.gradle
 
-      - name: Determine Branch Name
-        id: get_branch_name
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
-          else
-            echo "BRANCH_NAME=${{ github.ref }}" >> $GITHUB_ENV
-          fi
-
-      - name: Commit files
-        run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git commit -a -m "Add changes"
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ env.BRANCH_NAME }}
-
-#      - name: commit changes
+#      - name: Determine Branch Name
+#        id: get_branch_name
 #        run: |
-#            # Note: the following account information will not work on GHES
-#            git config user.name "github-actions[bot]"
-#            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-#            git add .
-#            git commit -m "new version code: ${{ env.NEW_VERSION_CODE }}"
-#            git push origin HEAD:${{ env.BRANCH_NAME }}
-
+#          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+#            echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
+#          else
+#            echo "BRANCH_NAME=${{ github.ref }}" >> $GITHUB_ENV
+#          fi
 #
-#      - name: Commit and Push Changes
+#      - name: Commit files
 #        run: |
-#          git config --global user.name "github-actions[bot]"
-#          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-#          git add app/build.gradle
-#          git commit -m "Automatically updated versioning: ${{ env.NEW_VERSION_CODE }}"
-#          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-#          git pull origin HEAD:${{ env.BRANCH_NAME }}
-#          git push origin HEAD:${{ env.BRANCH_NAME }}
-          
-#      - name: Configure Git user
-#        run: |
-#          git config --global user.name "GitHub Action"
-#          git config --global user.email "actions@github.com"
-#
-#      - name: Commit changes
-#        run: |
-#          git add app/build.gradle
-#          git commit -m "Update versionCode to ${VERSION_CODE} from GitHub Actions"
+#          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+#          git config --local user.name "github-actions[bot]"
+#          git commit -a -m "Add changes"
 #
 #      - name: Push changes
-#        run: git push
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub automatically provides this token to authenticate push
+#        uses: ad-m/github-push-action@master
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          branch: ${{ env.BRANCH_NAME }}
 
 #      - name: Determine Release Notes
 #        id: release_notes
