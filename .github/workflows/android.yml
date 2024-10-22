@@ -63,7 +63,8 @@ jobs:
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
           else
-            echo "BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+            BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+            echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
           fi
           echo "${BRANCH_NAME}"
 #
